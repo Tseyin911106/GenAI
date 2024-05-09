@@ -1,0 +1,153 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyM0S85mJIKmI3vNhhfakCa8",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Tseyin911106/GenAI/blob/main/t-t-t\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 378
+        },
+        "id": "WvGM7i7rRNYN",
+        "outputId": "4b1214dd-84e6-4c78-f0e4-b2729658c317"
+      },
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ModuleNotFoundError",
+          "evalue": "No module named 'fastapi'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m                       Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-1-92e2aa0cceb5>\u001b[0m in \u001b[0;36m<cell line: 9>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      7\u001b[0m \u001b[0;31m# pip install accelerate\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      8\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 9\u001b[0;31m \u001b[0;32mfrom\u001b[0m \u001b[0mfastapi\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mFastAPI\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mFile\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mUploadFile\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     10\u001b[0m \u001b[0;32mfrom\u001b[0m \u001b[0mfastapi\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mresponses\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mResponse\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[0;32mfrom\u001b[0m \u001b[0mpydantic\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mBaseModel\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m: No module named 'fastapi'",
+            "",
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0;32m\nNOTE: If your import is failing due to a missing package, you can\nmanually install dependencies using either !pip or !apt.\n\nTo view examples of installing some common dependencies, click the\n\"Open Examples\" button below.\n\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n"
+          ],
+          "errorDetails": {
+            "actions": [
+              {
+                "action": "open_url",
+                "actionText": "Open Examples",
+                "url": "/notebooks/snippets/importing_libraries.ipynb"
+              }
+            ]
+          }
+        }
+      ],
+      "source": [
+        "## To run server: python whisper_llm_server.py\n",
+        "## To run client: python post_audio.py\n",
+        "\n",
+        "# pip install git+https://github.com/openai/whisper.git\n",
+        "# pip install fastapi uvicorn\n",
+        "# pip install nest-asyncio\n",
+        "# pip install accelerate\n",
+        "\n",
+        "from fastapi import FastAPI, File, UploadFile\n",
+        "from fastapi.responses import Response\n",
+        "from pydantic import BaseModel\n",
+        "import uvicorn\n",
+        "import json\n",
+        "\n",
+        "import whisper\n",
+        "ASR = whisper.load_model(\"base\")\n",
+        "\n",
+        "import torch\n",
+        "import transformers\n",
+        "from transformers import AutoModelForCausalLM , AutoTokenizer\n",
+        "\n",
+        "### https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard\n",
+        "#model_name = \"Q-bert/Mamba-130M\"\n",
+        "#model_name = \"Q-bert/Mamba-370M\"\n",
+        "#model_name = \"Q-bert/Mamba-790M\"\n",
+        "#model_name = \"Q-bert/Mamba-1B\"\n",
+        "#model_name = \"Q-bert/Mamba-3B\"\n",
+        "#model_name = \"Q-bert/Mamba-3B-slimpj\"\n",
+        "#model_name = \"ckip-joint/bloom-3b-zh\" # zh\n",
+        "#model_name = \"google/gemma-1.1-7b-it\"\n",
+        "#model_name = \"microsoft/phi-2\"\n",
+        "#model_name = \"microsoft/Orca-2-7b\"\n",
+        "#model_name = \"mistralai/Mistral-7B-Instruct-v0.2\"\n",
+        "#model_name = \"openlm-research/open_llama_3b_v2\"\n",
+        "#model_name = \"openlm-research/open_llama_7b_v2\"\n",
+        "#model_name = \"meta-llama/Llama-2-7b-hf\"\n",
+        "#model_name = \"meta-llama/Llama-2-7b-chat-hf\"\n",
+        "#model_name = \"lmsys/vicuna-7b-v1.5\"\n",
+        "#model_name = \"lmsys/vicuna-7b-v1.5-16k\"\n",
+        "#model_name = \"Nexusflow/Starling-LM-7B-beta\"\n",
+        "\n",
+        "#model_name = \"Qwen/Qwen1.5-7B-Chat\" # 通义千问\n",
+        "#model_name = \"01-ai/Yi-6B-Chat\" # 零一万物\n",
+        "#model_name = \"yentinglin/Taiwan-LLM-7B-v2.0.1-chat\" # 台大\n",
+        "#model_name = \"MediaTek-Research/Breeze-7B-Instruct-v0.1\" # 達哥\n",
+        "#model_name = \"INX-TEXT/Bailong-instruct-7B\" # 白龍\n",
+        "model_name = \"taide/TAIDE-LX-7B-Chat\" # TAIDE\n",
+        "\n",
+        "print(model_name)\n",
+        "\n",
+        "#LLM = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, torch_dtype=\"auto\", device_map=\"cuda\")\n",
+        "LLM = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, torch_dtype=torch.bfloat16, device_map=\"cuda\")\n",
+        "tokenizer = AutoTokenizer.from_pretrained(model_name)\n",
+        "\n",
+        "import nest_asyncio\n",
+        "nest_asyncio.apply()\n",
+        "\n",
+        "app = FastAPI()\n",
+        "\n",
+        "@app.get(\"/\")\n",
+        "def home():\n",
+        "    return Response(\"Hello World!\")\n",
+        "\n",
+        "@app.post(\"/audio\")\n",
+        "def post_audio(audio: UploadFile = File(...)):\n",
+        "    print(audio.filename)\n",
+        "    fname = 'tmp_'+audio.filename\n",
+        "    with open(fname, 'wb') as f:\n",
+        "        content = audio.file.read()\n",
+        "        f.write(content)\n",
+        "\n",
+        "    # Whisper transcribe\n",
+        "    result = ASR.transcribe(fname)\n",
+        "    print(\"ASR: \"+result[\"text\"])\n",
+        "\n",
+        "    # LLM generate\n",
+        "    prompt = result[\"text\"]\n",
+        "    input_ids = tokenizer.encode(prompt, return_tensors=\"pt\").to(\"cuda\")\n",
+        "    output = LLM.generate(input_ids, max_length=128, num_beams=5, no_repeat_ngram_size=2)\n",
+        "    generated_text = tokenizer.decode(output[0], skip_special_tokens=True)\n",
+        "    print(\"LLM: \"+generated_text)\n",
+        "    return Response(generated_text)\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    uvicorn.run(app, host=\"0.0.0.0\", port=5000, log_level=\"info\")"
+      ]
+    }
+  ]
+}
